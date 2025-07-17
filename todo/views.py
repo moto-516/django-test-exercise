@@ -59,3 +59,14 @@ def delete(request, task_id):
         raise Http404("Task does not exist")
     task.delete()
     return redirect(index)
+
+
+def like(request, task_id):
+    try:
+        task = Task.objects.get(pk=task_id)
+        task.like += 1
+        task.save()
+    except Task.DoesNotExist:
+        raise Http404("Article does not exist")
+    
+    return redirect(detail, task_id)
