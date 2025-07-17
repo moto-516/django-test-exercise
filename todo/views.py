@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import Http404
 from django.utils.timezone import make_aware
 from django.utils.dateparse import parse_datetime
-from todo.models import Task
+from todo.models import Task, Comment
 
 # Create your views here.
 
@@ -29,8 +29,13 @@ def detail(request, task_id):
     except Task.DoesNotExist:
         raise Http404("Task does not exist")
 
+    if request.method == 'POST':
+        comment = Comment(task=task, text=request.POST['text'])
+        comment.save()
+
     context = {
         'task': task,
+        'comments': task.comments.order_by('-posted_at')
     }
     return render(request, 'todo/detail.html', context)
 
